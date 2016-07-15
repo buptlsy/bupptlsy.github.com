@@ -1,0 +1,142 @@
+﻿title: 单例模式的实现方式
+tags: java, 设计模式
+category: 设计模式
+---
+单例模式是最简单的一种设计模式。单例模式的通俗理解就是在在程序中类有且只有一个实例存在。
+<!--more-->
+## 5种实现方式
+
+### 懒汉
+懒汉方式即等到需要用到对象的时候再生成实例。
+
+    public class LazyInitialization {
+    	private static Resource resource;
+    	public synchronized static Resource getInstance() {
+    		if (resource == null) resource = new Resource();
+    		return resource;
+    	}
+    }
+
+上面方式解决并发问题时用了synchronized，在方法上加锁。这种方式导致并发度不是很高，存在优化的地方。双重检验加锁通过减少加锁的粒度，来优化懒汉方式。
+
+### 双重检验加锁
+通过对实例加锁，减小了加锁的粒度，使并发度更高。
+
+    public class DoubleCheckedLocking {
+    	private static volatile Resource resource;
+    	public static Resource getInstance() {
+    		if (resource == null) {
+	    		synchronized(DoubleCheckedLocking.class) {
+	    			if (resource == null) {
+	    				resource = new Resource();
+	    			}
+	    		}
+	    	}
+	    	return resource;
+    	}
+    }
+
+通常对双重检验加锁存在两种疑问：
+1.为什么使用volatile?
+其一：被volatile修饰的变量的值，将不会被本地线程缓存，所有对该变量的读写都是直接操作共享内存，从而确保多个线程能正确的处理该变量。
+其二：resource = new Resource();这行代码在jvm中执行的过程为：
+
+ - (1)给singleton分配内存
+ - (2)调用构造函数来初始化成员变量
+ - (3)将resource指向分配的内存空间，执行完这步resource才非空。
+ 
+
+在jvm中存在指令重排序的优化，也就是说步骤2、3的顺序不能保证。如果顺序是(1)-(3)-(2)，则在(3)执行完毕、(2)未执行之前，被线程二抢占了，这时 instance 已经是非 null 了(但却没有初始化)，所以线程二会直接返回 instance，然后使用，然后报错。
+由于volatile关键字可能会屏蔽掉虚拟机中的一些必要的代码优化，所以运行效率并不是很高。
+2.两个if的作用是什么？
+第一个if是如果实例已经存在，就没必要再生成实例了，也就没必要进行加锁了。第二个if是处理并发的问题。当两个线程a、b，a线程拿到锁，b线程等待锁，a线程实例化对象后，释放锁，b线程拿到锁但是这个时候类已经实例化了，没必要进行实例化操作了。所以两个if使得并发度更高。
+
+### 延长初始化占位类模式
+上面两种方式都是实现了延迟加载和线程安全。另外一种方法是使用静态内部类实现延迟加载和线程安全。在某些情况下，JVM已经隐含的为您执行了同步，这些情况下就不用自己再来进行同步控制了。包括：
+ 1. 由静态初始化器（在静态字段上或static{}块中的初始化器）初始化数据时
+ 2. 访问final字段时
+ 
+代码如下：
+
+    public class ResourceFactory {
+    	public static Resource getInstance() {
+    		return ResourceHolder.resource;
+    	}
+    	private ResourceFactory() {}
+    	private static class ResourceHolder {
+    		public static Resource resource = new Resource();
+	    }
+    }
+此类方式是很好的实现单例的方式。
+### 饿汉
+通常在加载类的时候，就实例化对象。这是和懒汉不一样的地方。
+    
+    public class EagerInitialization {
+    	private static Resource resource = new Resource();
+    	public static Resource getResource() {
+    		return resource;
+        }
+    }
+
+### enum
+enum类型是java se5中引入的新特性。
+
+    public enum EnumA {
+	    Instance;
+    }
+
+为什么enum类型可以保证类只有一个实例？
+1.enum类型反编译后，是一个final类。反编译后的类继承了Enum类型，并且是final类型的，所以这个类不能被继承。同时public static final EnumA Instance;是static final的，说明在程序中第一次用到的时候，会被加载。类似于单例模式的懒汉模式的实现。
+
+    public final class EnumA extends Enum {
+    
+        private EnumA(String s, int i) {
+            super(s, i);
+        }
+    
+        public static EnumA[] values() {
+            EnumA aenuma[];
+            int i;
+            EnumA aenuma1[];
+            System.arraycopy(aenuma = ENUM$VALUES, 0, aenuma1 = new EnumA[i = aenuma.length], 0, i);
+            return aenuma1;
+        }
+    
+        public static EnumA valueOf(String s) {
+            return (EnumA)Enum.valueOf(EnumA, s);
+        }
+    
+        public static final EnumA Instance;
+        private static final EnumA ENUM$VALUES[];
+
+        static {
+            Instance = new EnumA("Instance", 0);
+            ENUM$VALUES = (new EnumA[] {
+                Instance
+            });
+        }
+    }
+
+
+2.Enum类型确保了对象不能进行反序列化。这一特性是在enum源代码中禁止的。要使一个类可以被序列化，需要实现readObject()和writeObject()。
+
+    /**
+    * prevent default deserialization
+    */
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        throw new InvalidObjectException("can't deserialize enum");
+    }
+
+    private void readObjectNoData() throws ObjectStreamException {
+        throw new InvalidObjectException("can't deserialize enum");
+    }
+
+    /**
+    * Throws CloneNotSupportedException.  This guarantees that enums     are never cloned, which is necessary to preserve their"singleton" status.
+    *
+    * @return (never returns)
+    */
+    protected final Object clone() throws CloneNotSupportedException {
+    	throw new CloneNotSupportedException();
+    }
+
