@@ -1,0 +1,819 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="java," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="countDownLatch实现了一种同步策略，允许一个或者多个线程等待直到一组操作被其他线程执行完成。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="countDownLatch的使用和实现">
+<meta property="og:url" content="http://yoursite.com/2016/05/27/countDownLatch/index.html">
+<meta property="og:site_name" content="知行合一">
+<meta property="og:description" content="countDownLatch实现了一种同步策略，允许一个或者多个线程等待直到一组操作被其他线程执行完成。">
+<meta property="og:updated_time" content="2016-05-29T13:19:47.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="countDownLatch的使用和实现">
+<meta name="twitter:description" content="countDownLatch实现了一种同步策略，允许一个或者多个线程等待直到一组操作被其他线程执行完成。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+  <title> countDownLatch的使用和实现 | 知行合一 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?93c91ab621c82bd1fc32376a4ca10d87";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">知行合一</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                countDownLatch的使用和实现
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-05-27T17:21:48+08:00" content="2016-05-27">
+              2016-05-27
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index">
+                    <span itemprop="name">java</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/05/27/countDownLatch/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/05/27/countDownLatch/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+              &nbsp; | &nbsp;
+              <span class="page-pv"><i class="fa fa-file-o"></i>
+              <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+              </span>
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>countDownLatch实现了一种同步策略，允许一个或者多个线程等待直到一组操作被其他线程执行完成。<br><a id="more"></a></p>
+<h3 id="countDownLatch实现源码分析："><a href="#countDownLatch实现源码分析：" class="headerlink" title="countDownLatch实现源码分析："></a>countDownLatch实现源码分析：</h3><pre><code>public class CountDownLatch {
+    //利用AQS实现Sync类，来表示count
+    private static final class Sync extends AbstractQueuedSynchronizer {
+        Sync(int count) {
+            setState(count);
+        }
+
+        int getCount() {
+            return getCount();
+        }
+
+        protected int tryAcquireShared(int acquires) {
+            return (getState == 0) ? 1 : -1;
+        }
+
+        protected boolean tryReleaseShared(int releases) {
+            for (;;) {
+                int c = getState();
+                if (c == 0) {
+                    return false;
+                }
+                int nextc = c - 1;
+                if (compareAndSetState(c, nextc)) {
+                    return nextc == 0;
+                }
+            }
+        }
+    }
+
+    private final Sync sync;
+
+    /*
+    * count：在线程可以通过之前，countDown()触发的次数。
+    */
+    private CoundDownLatch(int count) {
+        if (count &lt; 0) throws new IlleagalArgumentException(&quot;count &lt; 0&quot;);
+        this.sync = new Sync();
+    }
+
+    /*
+    * 如果当前count减小到0，那么方法立即返回
+    * 如果当前count比0更大，那么当前线程阻塞。直到count减小到0或者一些其他的线程中断了当前线程
+    *  
+    */
+    public void await() throws InterruptedException {
+        sync.acquireSharedInterruptibly(1);
+    }
+
+    /**
+    * 引起当前线程等待直到门栓值减到了0。除非这个线程被中断或者超过了指定的等待时间 。如果当前count=0，那么这个方法立即返回true。如果count&gt;0,线程变为等待，直到下面3件事情发生：
+    * 1.count值变为0
+    * 2.超过了给定的等待时间
+    * 3.其他的线程中断了当前线程。如果当前线程有着中断状态设置在方法入口，或者当等待的时候被中断，那么会抛出InterruptedException并且当前线程的中断状态被清楚。
+    /
+    public boolean await(long time, TimeUnit unit) throws InterruptedException {
+        return sync.tryAcquireSharedNanos(1, unit.toNanos(timeout));
+    }
+
+    /**
+     * 减少门栓的count值。如果count减到0，释放所有的等待线程。
+     * 如果当前count值大于0，那么count减1；如果减少后的count值为0，则所有的等待线程变为可运行状态；如果当前的count为0，那么什么也不发生。
+     */
+    public void countDown() {
+        sync.releaseShared(1);
+    }
+
+    /**
+    * 返回当前count值。
+    * 这个方法主要是为了测试或者调试。
+    /
+    public long getCount() {
+        return sync.getCount();
+    }
+}
+</code></pre><h3 id="countDownLatch的使用例子："><a href="#countDownLatch的使用例子：" class="headerlink" title="countDownLatch的使用例子："></a>countDownLatch的使用例子：</h3><p>典型用法 例子1：将一个问题分为N个部分，把每一部分描述为一个Runnable,并且减小门栓值，将所有的Runnables放进一个Executor中。当所有子部分完成时，协作线程将能够通过await。</p>
+<pre><code>class Driver {
+    void main() throws InterruptedException {
+        CountDownLatch doneSignal = new CountDownLatch(N);
+        Executor e = ...
+        for (int i = 0; i &lt; N; i++) {
+            e.execute(new WorkerRunnable(doneSignal, i));
+        }
+        doneSignal.await(); //等待所有的线程结束
+    }
+}
+
+class WorkerRunnable implements Runnable {
+    private final CountDownLatch doneSignal;
+    private int i;
+    WorkerRunnable(CountDownLatch doneSignal, int i) {
+        this.doneSignal = doneSignal;
+        this.i = i;
+    }
+
+    public void run() {
+        try {
+            doWork(i);
+            doneSignal.countDown();
+        } catch (InterruptedException e) {
+
+        }
+    }
+
+    void doWork() {...}
+}
+</code></pre><p>典型用法 例子2：第一个开始信号阻止工作线程通过指导driver是准备好让他们通过；第二个结束信号是等到所有worker结束了，driver才能运行。</p>
+<pre><code>class Driver {
+    CountDownLatch startSignal = new CountDownLatch(1);
+    CountDownLatch doneSignal = new CountDownLatch(N);
+
+    for (int i = 0; i &lt; N; i++) {
+        new Thread(new Worker(startSignal, doneSignal)).start();
+    }
+    doSomethingElse();
+    startSignal.countDown();
+    doSomethingElse();
+    doneSignal.await();
+}
+
+class Worker implements Runnable {
+    private final CountDownLatch startSignal;
+    private final CountDownLatch doneSignal;
+    Worker(CountDownLatch startSignal, CountDownLatch doneSignal) {
+        this.startSignal = startSignal;
+        this.doneSignal = doneSignal;
+    }
+    public void run() {
+        try {
+            startSignal.await();
+            doWork();
+            doneSignal.countDown();
+        } catch (InterruptedException e) {
+
+        }
+    }
+    void work() {...}
+}
+</code></pre><p>问题：<br>1.TimeUnit类的使用和原理。<br>2.Memory consistency effects: Until the count reaches<br> zero, actions in a thread prior to calling<br> {@code countDown()}<br> <a href="package-summary.html#MemoryVisibility"><i>happen-before</i></a><br> actions following a successful return from a corresponding<br> {@code await()} in another thread.</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag">#java</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/05/27/abstractQueuedSynchronizer/" rel="next" title="abstractQueuedSynchronizer详解">
+                <i class="fa fa-chevron-left"></i> abstractQueuedSynchronizer详解
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/06/03/redis_sds_list/" rel="prev" title="redis的动态字符串和链表">
+                redis的动态字符串和链表 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+   
+      <div class="ds-thread" data-thread-key="2016/05/27/countDownLatch/"
+           data-title="countDownLatch的使用和实现" data-url="http://yoursite.com/2016/05/27/countDownLatch/">
+       <script type="text/javascript">
+       var duoshuoQuery = {short_name:"buptlsy"};
+        (function() {
+                    var ds = document.createElement('script');
+                            ds.type = 'text/javascript';ds.async = true;
+                                    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+                                            ds.charset = 'UTF-8';
+                                                    (document.getElementsByTagName('head')[0] 
+                                                             || document.getElementsByTagName('body')[0]).appendChild(ds);
+                                                                })();
+                                                                    </script>
+                                                                    <!-- 多说公共JS代码 end -->
+    </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="https://raw.githubusercontent.com/buptlsy/images/gh-pages/suolong.jpg"
+               alt="lsy" />
+          <p class="site-author-name" itemprop="name">lsy</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">15</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/buptlsy/" target="_blank" title="github">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  github
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#countDownLatch实现源码分析："><span class="nav-number">1.</span> <span class="nav-text">countDownLatch实现源码分析：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#countDownLatch的使用例子："><span class="nav-number">2.</span> <span class="nav-text">countDownLatch的使用例子：</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lsy</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"buptlsy"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>

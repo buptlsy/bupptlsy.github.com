@@ -1,0 +1,787 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="java, 设计模式," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="单例模式是最简单的一种设计模式。单例模式的通俗理解就是在在程序中类有且只有一个实例存在。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="单例模式的实现方式">
+<meta property="og:url" content="http://yoursite.com/2016/05/25/单例模式实现方式/index.html">
+<meta property="og:site_name" content="知行合一">
+<meta property="og:description" content="单例模式是最简单的一种设计模式。单例模式的通俗理解就是在在程序中类有且只有一个实例存在。">
+<meta property="og:updated_time" content="2016-05-25T13:15:34.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="单例模式的实现方式">
+<meta name="twitter:description" content="单例模式是最简单的一种设计模式。单例模式的通俗理解就是在在程序中类有且只有一个实例存在。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+  <title> 单例模式的实现方式 | 知行合一 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?93c91ab621c82bd1fc32376a4ca10d87";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">知行合一</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                单例模式的实现方式
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-05-25T21:12:27+08:00" content="2016-05-25">
+              2016-05-25
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/设计模式/" itemprop="url" rel="index">
+                    <span itemprop="name">设计模式</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/05/25/单例模式实现方式/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/05/25/单例模式实现方式/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+              &nbsp; | &nbsp;
+              <span class="page-pv"><i class="fa fa-file-o"></i>
+              <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+              </span>
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>单例模式是最简单的一种设计模式。单例模式的通俗理解就是在在程序中类有且只有一个实例存在。<br><a id="more"></a></p>
+<h2 id="5种实现方式"><a href="#5种实现方式" class="headerlink" title="5种实现方式"></a>5种实现方式</h2><h3 id="懒汉"><a href="#懒汉" class="headerlink" title="懒汉"></a>懒汉</h3><p>懒汉方式即等到需要用到对象的时候再生成实例。</p>
+<pre><code>public class LazyInitialization {
+    private static Resource resource;
+    public synchronized static Resource getInstance() {
+        if (resource == null) resource = new Resource();
+        return resource;
+    }
+}
+</code></pre><p>上面方式解决并发问题时用了synchronized，在方法上加锁。这种方式导致并发度不是很高，存在优化的地方。双重检验加锁通过减少加锁的粒度，来优化懒汉方式。</p>
+<h3 id="双重检验加锁"><a href="#双重检验加锁" class="headerlink" title="双重检验加锁"></a>双重检验加锁</h3><p>通过对实例加锁，减小了加锁的粒度，使并发度更高。</p>
+<pre><code>public class DoubleCheckedLocking {
+    private static volatile Resource resource;
+    public static Resource getInstance() {
+        if (resource == null) {
+            synchronized(DoubleCheckedLocking.class) {
+                if (resource == null) {
+                    resource = new Resource();
+                }
+            }
+        }
+        return resource;
+    }
+}
+</code></pre><p>通常对双重检验加锁存在两种疑问：<br>1.为什么使用volatile?<br>其一：被volatile修饰的变量的值，将不会被本地线程缓存，所有对该变量的读写都是直接操作共享内存，从而确保多个线程能正确的处理该变量。<br>其二：resource = new Resource();这行代码在jvm中执行的过程为：</p>
+<ul>
+<li>(1)给singleton分配内存</li>
+<li>(2)调用构造函数来初始化成员变量</li>
+<li>(3)将resource指向分配的内存空间，执行完这步resource才非空。</li>
+</ul>
+<p>在jvm中存在指令重排序的优化，也就是说步骤2、3的顺序不能保证。如果顺序是(1)-(3)-(2)，则在(3)执行完毕、(2)未执行之前，被线程二抢占了，这时 instance 已经是非 null 了(但却没有初始化)，所以线程二会直接返回 instance，然后使用，然后报错。<br>由于volatile关键字可能会屏蔽掉虚拟机中的一些必要的代码优化，所以运行效率并不是很高。<br>2.两个if的作用是什么？<br>第一个if是如果实例已经存在，就没必要再生成实例了，也就没必要进行加锁了。第二个if是处理并发的问题。当两个线程a、b，a线程拿到锁，b线程等待锁，a线程实例化对象后，释放锁，b线程拿到锁但是这个时候类已经实例化了，没必要进行实例化操作了。所以两个if使得并发度更高。</p>
+<h3 id="延长初始化占位类模式"><a href="#延长初始化占位类模式" class="headerlink" title="延长初始化占位类模式"></a>延长初始化占位类模式</h3><p>上面两种方式都是实现了延迟加载和线程安全。另外一种方法是使用静态内部类实现延迟加载和线程安全。在某些情况下，JVM已经隐含的为您执行了同步，这些情况下就不用自己再来进行同步控制了。包括：</p>
+<ol>
+<li>由静态初始化器（在静态字段上或static{}块中的初始化器）初始化数据时</li>
+<li>访问final字段时</li>
+</ol>
+<p>代码如下：</p>
+<pre><code>public class ResourceFactory {
+    public static Resource getInstance() {
+        return ResourceHolder.resource;
+    }
+    private ResourceFactory() {}
+    private static class ResourceHolder {
+        public static Resource resource = new Resource();
+    }
+}
+</code></pre><p>此类方式是很好的实现单例的方式。</p>
+<h3 id="饿汉"><a href="#饿汉" class="headerlink" title="饿汉"></a>饿汉</h3><p>通常在加载类的时候，就实例化对象。这是和懒汉不一样的地方。</p>
+<pre><code>public class EagerInitialization {
+    private static Resource resource = new Resource();
+    public static Resource getResource() {
+        return resource;
+    }
+}
+</code></pre><h3 id="enum"><a href="#enum" class="headerlink" title="enum"></a>enum</h3><p>enum类型是java se5中引入的新特性。</p>
+<pre><code>public enum EnumA {
+    Instance;
+}
+</code></pre><p>为什么enum类型可以保证类只有一个实例？<br>1.enum类型反编译后，是一个final类。反编译后的类继承了Enum类型，并且是final类型的，所以这个类不能被继承。同时public static final EnumA Instance;是static final的，说明在程序中第一次用到的时候，会被加载。类似于单例模式的懒汉模式的实现。</p>
+<pre><code>public final class EnumA extends Enum {
+
+    private EnumA(String s, int i) {
+        super(s, i);
+    }
+
+    public static EnumA[] values() {
+        EnumA aenuma[];
+        int i;
+        EnumA aenuma1[];
+        System.arraycopy(aenuma = ENUM$VALUES, 0, aenuma1 = new EnumA[i = aenuma.length], 0, i);
+        return aenuma1;
+    }
+
+    public static EnumA valueOf(String s) {
+        return (EnumA)Enum.valueOf(EnumA, s);
+    }
+
+    public static final EnumA Instance;
+    private static final EnumA ENUM$VALUES[];
+
+    static {
+        Instance = new EnumA(&quot;Instance&quot;, 0);
+        ENUM$VALUES = (new EnumA[] {
+            Instance
+        });
+    }
+}
+</code></pre><p>2.Enum类型确保了对象不能进行反序列化。这一特性是在enum源代码中禁止的。要使一个类可以被序列化，需要实现readObject()和writeObject()。</p>
+<pre><code>/**
+* prevent default deserialization
+*/
+private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    throw new InvalidObjectException(&quot;can&apos;t deserialize enum&quot;);
+}
+
+private void readObjectNoData() throws ObjectStreamException {
+    throw new InvalidObjectException(&quot;can&apos;t deserialize enum&quot;);
+}
+
+/**
+* Throws CloneNotSupportedException.  This guarantees that enums     are never cloned, which is necessary to preserve their&quot;singleton&quot; status.
+*
+* @return (never returns)
+*/
+protected final Object clone() throws CloneNotSupportedException {
+    throw new CloneNotSupportedException();
+}
+</code></pre>
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java-设计模式/" rel="tag">#java, 设计模式</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/05/25/wait_notify/" rel="next" title="wait,notify,sleep">
+                <i class="fa fa-chevron-left"></i> wait,notify,sleep
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/05/26/synchronized_volatile/" rel="prev" title="synchronized和volatile的那些事">
+                synchronized和volatile的那些事 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+   
+      <div class="ds-thread" data-thread-key="2016/05/25/单例模式实现方式/"
+           data-title="单例模式的实现方式" data-url="http://yoursite.com/2016/05/25/单例模式实现方式/">
+       <script type="text/javascript">
+       var duoshuoQuery = {short_name:"buptlsy"};
+        (function() {
+                    var ds = document.createElement('script');
+                            ds.type = 'text/javascript';ds.async = true;
+                                    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+                                            ds.charset = 'UTF-8';
+                                                    (document.getElementsByTagName('head')[0] 
+                                                             || document.getElementsByTagName('body')[0]).appendChild(ds);
+                                                                })();
+                                                                    </script>
+                                                                    <!-- 多说公共JS代码 end -->
+    </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="https://raw.githubusercontent.com/buptlsy/images/gh-pages/suolong.jpg"
+               alt="lsy" />
+          <p class="site-author-name" itemprop="name">lsy</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">15</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/buptlsy/" target="_blank" title="github">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  github
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#5种实现方式"><span class="nav-number">1.</span> <span class="nav-text">5种实现方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#懒汉"><span class="nav-number">1.1.</span> <span class="nav-text">懒汉</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#双重检验加锁"><span class="nav-number">1.2.</span> <span class="nav-text">双重检验加锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#延长初始化占位类模式"><span class="nav-number">1.3.</span> <span class="nav-text">延长初始化占位类模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#饿汉"><span class="nav-number">1.4.</span> <span class="nav-text">饿汉</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#enum"><span class="nav-number">1.5.</span> <span class="nav-text">enum</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lsy</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"buptlsy"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,718 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="java," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="jdk内置工具对于查看监控java服务的运行情况、服务的性能问题分析十分有用。对于某些监控工具的运行，需要在服务器端配置参数，来方便客户端连接。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="jdk内置工具的使用">
+<meta property="og:url" content="http://yoursite.com/2016/07/19/jdk_tools/index.html">
+<meta property="og:site_name" content="知行合一">
+<meta property="og:description" content="jdk内置工具对于查看监控java服务的运行情况、服务的性能问题分析十分有用。对于某些监控工具的运行，需要在服务器端配置参数，来方便客户端连接。">
+<meta property="og:updated_time" content="2016-07-19T03:31:26.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="jdk内置工具的使用">
+<meta name="twitter:description" content="jdk内置工具对于查看监控java服务的运行情况、服务的性能问题分析十分有用。对于某些监控工具的运行，需要在服务器端配置参数，来方便客户端连接。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+  <title> jdk内置工具的使用 | 知行合一 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?93c91ab621c82bd1fc32376a4ca10d87";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">知行合一</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                jdk内置工具的使用
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-19T10:28:39+08:00" content="2016-07-19">
+              2016-07-19
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index">
+                    <span itemprop="name">java</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/07/19/jdk_tools/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/19/jdk_tools/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+              &nbsp; | &nbsp;
+              <span class="page-pv"><i class="fa fa-file-o"></i>
+              <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+              </span>
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>jdk内置工具对于查看监控java服务的运行情况、服务的性能问题分析十分有用。对于某些监控工具的运行，需要在服务器端配置参数，来方便客户端连接。<br><a id="more"></a></p>
+<h1 id="设置远程监控的相关选项"><a href="#设置远程监控的相关选项" class="headerlink" title="设置远程监控的相关选项"></a>设置远程监控的相关选项</h1><p>需要在server.sh启动脚本中加入以下参数：</p>
+<ul>
+<li>开启JVM远程监控 -Dcom.sun.management.jmxremote=true</li>
+<li>监控的IP地址 -Djava.rmi.server.hostname=192.168.91.166，远程进程所在主机的IP。</li>
+<li>监控的端口 -Dcom.sun.management.jmxremote.port=50013，这个端口值可以任意设置，但在之后用Jconsole连接这个远程进程的时候，远程进程中的port一定要和此处的设置一致，并且一定要和远程进程的服务端口区分开。</li>
+<li>是否禁用ssl验证 -Dcom.sun.management.jmxremote.ssl，false为禁用，true为启用。</li>
+<li>是否需要用户密码验证 -Dcom.sun.management.jmxremote.authenticate，false为不需要验证，true为需要验证。</li>
+</ul>
+<h1 id="jdk-内置工具介绍"><a href="#jdk-内置工具介绍" class="headerlink" title="jdk 内置工具介绍"></a>jdk 内置工具介绍</h1><h2 id="jinfo"><a href="#jinfo" class="headerlink" title="jinfo"></a>jinfo</h2><p>jinfo pid 查看进程的java系统参数以及vm参数.</p>
+<h2 id="jmap"><a href="#jmap" class="headerlink" title="jmap"></a>jmap</h2><p>主要是查看堆的情况，也可以将堆信息dump下来。</p>
+<h3 id="jmap-heap-pid"><a href="#jmap-heap-pid" class="headerlink" title="jmap -heap pid"></a>jmap -heap pid</h3><p>查看java堆的使用情况</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">Attaching to process ID 6196, please wait...</span><br><span class="line">Debugger attached successfully.</span><br><span class="line">Server compiler detected.</span><br><span class="line">JVM version is 25.91-b14</span><br><span class="line"></span><br><span class="line">using thread-local object allocation.</span><br><span class="line">Parallel GC with 2 thread(s)</span><br><span class="line"></span><br><span class="line">Heap Configuration:</span><br><span class="line">MinHeapFreeRatio         = 0                    ＃-xx:MinHeapFreeRatio 设置jvm堆最小空闲比率</span><br><span class="line">MaxHeapFreeRatio         = 100                  #-xx:MaxHeapFreeRatio 设置jvm堆最大空闲比率</span><br><span class="line">MaxHeapSize              = 536870912 (512.0MB)  ＃设置jvm堆的最大大小</span><br><span class="line">NewSize                  = 89128960 (85.0MB)    ＃设置jvm堆的 新生代的默认大小</span><br><span class="line">MaxNewSize               = 178782208 (170.5MB)  ＃设置jvm堆的 新生代的最大大小</span><br><span class="line">OldSize                  = 179306496 (171.0MB)  ＃设置jvm堆的 老年代的大小</span><br><span class="line">NewRatio                 = 2                    ＃设置新生代和老年代的大小比例</span><br><span class="line">SurvivorRatio            = 8                    ＃设置新生代中的 eden区和survivor区的大小比值</span><br><span class="line">MetaspaceSize            = 21807104 (20.796875MB)＃jdk1.8，类似于jdk1.7中的 permsize</span><br><span class="line">CompressedClassSpaceSize = 1073741824 (1024.0MB) </span><br><span class="line">MaxMetaspaceSize         = 17592186044415 MB</span><br><span class="line">G1HeapRegionSize         = 0 (0.0MB)</span><br><span class="line"></span><br><span class="line">Heap Usage:</span><br><span class="line">PS Young Generation</span><br><span class="line">Eden Space:</span><br><span class="line">capacity = 82837504 (79.0MB)</span><br><span class="line">used     = 27614056 (26.334815979003906MB)</span><br><span class="line">free     = 55223448 (52.665184020996094MB)</span><br><span class="line">33.33521010000494% used</span><br><span class="line">From Space:</span><br><span class="line">capacity = 3145728 (3.0MB)</span><br><span class="line">used     = 1534048 (1.462982177734375MB)</span><br><span class="line">free     = 1611680 (1.537017822265625MB)</span><br><span class="line">48.766072591145836% used</span><br><span class="line">                                                            </span><br><span class="line">To Space:</span><br><span class="line">capacity = 3145728 (3.0MB)</span><br><span class="line">used     = 0 (0.0MB)</span><br><span class="line">free     = 3145728 (3.0MB)</span><br><span class="line">0.0% used</span><br><span class="line">PS Old Generation</span><br><span class="line">capacity = 201850880 (192.5MB)</span><br><span class="line">used     = 49296248 (47.01256561279297MB)</span><br><span class="line">free     = 152554632 (145.48743438720703MB)</span><br><span class="line">24.422112006645698% used</span><br><span class="line"></span><br><span class="line">26112 interned Strings occupying 2975608 bytes.</span><br></pre></td></tr></table></figure>
+<h3 id="jmap-histo-pid"><a href="#jmap-histo-pid" class="headerlink" title="jmap -histo pid"></a>jmap -histo pid</h3><p>查看堆内存中对象数量和大小<br>对比：jmap -histo:live pid jvm会先出发gc，再进行统计</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">num     #instances      #bytes  class name</span><br><span class="line">----------------------------------------------</span><br><span class="line">1:         52843       25434824  [B</span><br><span class="line">2:        204331       23624576  [C</span><br><span class="line">3:         26098        7198896  [I</span><br><span class="line">4:        116142        4724056  [Ljava.lang.Object;</span><br><span class="line">5:        161108        3866592  java.lang.String</span><br><span class="line">6:         27160        2390080  java.lang.reflect.Method</span><br><span class="line">7:         47005        1504160  java.io.ObjectStreamClass$WeakClassKey</span><br><span class="line">8:         45639        1460448  java.util.HashMap$Node</span><br><span class="line">9:         12598        1443432  [Ljava.util.HashMap$Node;</span><br><span class="line">10:        24589        1180272  java.util.HashMap</span><br></pre></td></tr></table></figure>
+<h3 id="jmap-dump-format-b-file-heapdump-pid"><a href="#jmap-dump-format-b-file-heapdump-pid" class="headerlink" title="jmap -dump:format=b,file=heapdump pid"></a>jmap -dump:format=b,file=heapdump pid</h3><p>将当前内存使用的详细信息存储到文件中</p>
+<h2 id="jstack"><a href="#jstack" class="headerlink" title="jstack"></a>jstack</h2><p>打印线程的栈信息<br>参考：<a href="http://www.blogjava.net/jzone/articles/303979.html" target="_blank" rel="external">http://www.blogjava.net/jzone/articles/303979.html</a></p>
+<h2 id="jstatd"><a href="#jstatd" class="headerlink" title="jstatd"></a>jstatd</h2><p>为了使jstat,jps命令能远程监控服务器上的java服务，需要在服务器上运行jstatd服务。方式如下：<br>首先新建一个文件，假设目录和文件名是 /home/jstatd.policy  文件内容如下：</p>
+<pre><code>grant codebase &quot;file:${java.home}/../lib/tools.jar&quot; {  
+    permission java.security.AllPermission;  
+};
+</code></pre><p>然后启动jstatd服务。</p>
+<pre><code>jstatd -p 8725 -J-Djava.security.policy=/home/jstatd.policy -J-Djava.rmi.server.hostname=XX.XXX.X.XX
+</code></pre><h2 id="jstat"><a href="#jstat" class="headerlink" title="jstat"></a>jstat</h2><p>jstat 参数比较多，主要有以下几类：</p>
+<ul>
+<li>类的加载、卸载情况</li>
+<li>查看新生代、老年代和持久区的容量及使用情况</li>
+<li>查看新生代、老年代和持久区的垃圾收集情况，包括垃圾回收的次数以及垃圾回收所占用的时间</li>
+<li>查看新生代中eden区和survivor区中容量及分配情况</li>
+</ul>
+<p>参考：<a href="http://docs.oracle.com/javase/7/docs/technotes/tools/share/jstat.html" target="_blank" rel="external">http://docs.oracle.com/javase/7/docs/technotes/tools/share/jstat.html</a></p>
+<p>jstat远程监控命令：</p>
+<pre><code>jstat -gcutil 18182@10.94.96.146:1099 1000
+</code></pre><h2 id="jps"><a href="#jps" class="headerlink" title="jps"></a>jps</h2><p>显示当前运行的java进程以及相关参数。实现原理是：读取 /tmp/hsperfdata 有几个文件，文件名是以java服务进程的ID命名的。</p>
+<p>jps远程监控命令：</p>
+<pre><code>jps -lv rmi://10.94.96.146:1099 1099为jstatd的端口
+</code></pre><h2 id="jvisualvm"><a href="#jvisualvm" class="headerlink" title="jvisualvm"></a>jvisualvm</h2><p>是一种可视化的监控工具。包括 cpu、堆、线程、类的监控，也可以分析dump的堆文件，支持类sql查询。</p>
+<h2 id="jconsole"><a href="#jconsole" class="headerlink" title="jconsole"></a>jconsole</h2><p>是一种可视化的监控工具。包括cpu、内存、线程、类的监控。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag">#java</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/06/20/mysql-index/" rel="next" title="mysql索引那些事儿">
+                <i class="fa fa-chevron-left"></i> mysql索引那些事儿
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/07/19/linux_performance_monitoring/" rel="prev" title="linux服务器运行状态监控命令">
+                linux服务器运行状态监控命令 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+   
+      <div class="ds-thread" data-thread-key="2016/07/19/jdk_tools/"
+           data-title="jdk内置工具的使用" data-url="http://yoursite.com/2016/07/19/jdk_tools/">
+       <script type="text/javascript">
+       var duoshuoQuery = {short_name:"buptlsy"};
+        (function() {
+                    var ds = document.createElement('script');
+                            ds.type = 'text/javascript';ds.async = true;
+                                    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+                                            ds.charset = 'UTF-8';
+                                                    (document.getElementsByTagName('head')[0] 
+                                                             || document.getElementsByTagName('body')[0]).appendChild(ds);
+                                                                })();
+                                                                    </script>
+                                                                    <!-- 多说公共JS代码 end -->
+    </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="https://raw.githubusercontent.com/buptlsy/images/gh-pages/suolong.jpg"
+               alt="lsy" />
+          <p class="site-author-name" itemprop="name">lsy</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">15</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/buptlsy/" target="_blank" title="github">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  github
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#设置远程监控的相关选项"><span class="nav-number">1.</span> <span class="nav-text">设置远程监控的相关选项</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#jdk-内置工具介绍"><span class="nav-number">2.</span> <span class="nav-text">jdk 内置工具介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#jinfo"><span class="nav-number">2.1.</span> <span class="nav-text">jinfo</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jmap"><span class="nav-number">2.2.</span> <span class="nav-text">jmap</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#jmap-heap-pid"><span class="nav-number">2.2.1.</span> <span class="nav-text">jmap -heap pid</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#jmap-histo-pid"><span class="nav-number">2.2.2.</span> <span class="nav-text">jmap -histo pid</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#jmap-dump-format-b-file-heapdump-pid"><span class="nav-number">2.2.3.</span> <span class="nav-text">jmap -dump:format=b,file=heapdump pid</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jstack"><span class="nav-number">2.3.</span> <span class="nav-text">jstack</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jstatd"><span class="nav-number">2.4.</span> <span class="nav-text">jstatd</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jstat"><span class="nav-number">2.5.</span> <span class="nav-text">jstat</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jps"><span class="nav-number">2.6.</span> <span class="nav-text">jps</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jvisualvm"><span class="nav-number">2.7.</span> <span class="nav-text">jvisualvm</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jconsole"><span class="nav-number">2.8.</span> <span class="nav-text">jconsole</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lsy</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"buptlsy"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>
